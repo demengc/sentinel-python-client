@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+STAGED_PY=$(git diff --cached --name-only --diff-filter=ACM -- '*.py')
+
+if [ -z "$STAGED_PY" ]; then
+  exit 0
+fi
+
+printf "Formatting Python files... "
+if ruff format $STAGED_PY > /dev/null 2>&1; then
+  echo "$STAGED_PY" | xargs git add
+  echo "OK"
+else
+  echo "FAILED"
+  exit 1
+fi
