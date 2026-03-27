@@ -4,6 +4,7 @@ import hashlib
 import os
 import platform
 import subprocess
+import sys
 import threading
 import uuid
 
@@ -139,14 +140,17 @@ def _read_mac_uuid() -> str | None:
 
 
 def _read_windows_machine_guid() -> str | None:
-    try:
-        import winreg
+    if sys.platform == "win32":
+        try:
+            import winreg
 
-        with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Cryptography") as key:
-            value, _ = winreg.QueryValueEx(key, "MachineGuid")
-            return _normalize_identifier(str(value))
-    except Exception:
-        pass
+            with winreg.OpenKey(
+                winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Cryptography"
+            ) as key:
+                value, _ = winreg.QueryValueEx(key, "MachineGuid")
+                return _normalize_identifier(str(value))
+        except Exception:
+            pass
     output = _run_command(
         "reg", "query", r"HKLM\SOFTWARE\Microsoft\Cryptography", "/v", "MachineGuid"
     )
