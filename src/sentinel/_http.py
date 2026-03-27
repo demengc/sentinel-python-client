@@ -17,6 +17,15 @@ class ApiResponse:
     message: str | None
     result: dict[str, Any] | None
 
+    def require_result(self) -> dict[str, Any]:
+        if self.result is None:
+            raise SentinelApiError(
+                http_status=self.http_status,
+                type=self.type,
+                message="Response contained no result",
+            )
+        return self.result
+
 
 def _parse_response(
     status_code: int,

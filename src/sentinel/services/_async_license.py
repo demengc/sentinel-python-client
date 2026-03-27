@@ -70,15 +70,15 @@ class AsyncLicenseService:
 
     async def create(self, request: CreateLicenseRequest) -> License:
         resp = await self._http.request("POST", _BASE_PATH, json_body=request.to_body())
-        return License.model_validate(resp.result["license"])
+        return License.model_validate(resp.require_result()["license"])
 
     async def get(self, key: str) -> License:
         resp = await self._http.request("GET", f"{_BASE_PATH}/{key}")
-        return License.model_validate(resp.result["license"])
+        return License.model_validate(resp.require_result()["license"])
 
     async def list(self, request: ListLicensesRequest) -> Page[License]:
         resp = await self._http.request("GET", _BASE_PATH, query_params=request.to_query_params())
-        page_data = resp.result["page"]
+        page_data = resp.require_result()["page"]
         licenses = [License.model_validate(item) for item in page_data["content"]]
         meta = page_data["page"]
         return Page(
@@ -93,7 +93,7 @@ class AsyncLicenseService:
         resp = await self._http.request(
             "PATCH", f"{_BASE_PATH}/{key}", json_body=request.to_body()
         )
-        return License.model_validate(resp.result["license"])
+        return License.model_validate(resp.require_result()["license"])
 
     async def delete(self, key: str) -> None:
         await self._http.request("DELETE", f"{_BASE_PATH}/{key}")
@@ -103,10 +103,10 @@ class AsyncLicenseService:
         resp = await self._http.request(
             "POST", f"{_BASE_PATH}/{key}/regenerate-key", query_params=params
         )
-        return License.model_validate(resp.result["license"])
+        return License.model_validate(resp.require_result()["license"])
 
     def _parse_validation_success(self, resp: ApiResponse) -> ValidationResult:
-        validation = resp.result["validation"]
+        validation = resp.require_result()["validation"]
         nonce = validation["nonce"]
         timestamp = validation["timestamp"]
         signature = validation.get("signature")

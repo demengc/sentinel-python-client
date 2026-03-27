@@ -14,7 +14,7 @@ class AsyncLicenseConnectionOperations:
         resp = await self._http.request(
             "POST", f"{_BASE_PATH}/{key}/connections", json_body=connections
         )
-        return License.model_validate(resp.result["license"])
+        return License.model_validate(resp.require_result()["license"])
 
     async def remove(self, key: str, platforms: set[str]) -> License:
         resp = await self._http.request(
@@ -22,7 +22,7 @@ class AsyncLicenseConnectionOperations:
             f"{_BASE_PATH}/{key}/connections",
             multi_query_params={"platforms": sorted(platforms)},
         )
-        return License.model_validate(resp.result["license"])
+        return License.model_validate(resp.require_result()["license"])
 
 
 class AsyncLicenseServerOperations:
@@ -33,7 +33,7 @@ class AsyncLicenseServerOperations:
         resp = await self._http.request(
             "POST", f"{_BASE_PATH}/{key}/servers", json_body=sorted(identifiers)
         )
-        return License.model_validate(resp.result["license"])
+        return License.model_validate(resp.require_result()["license"])
 
     async def remove(self, key: str, identifiers: set[str]) -> License:
         resp = await self._http.request(
@@ -41,7 +41,7 @@ class AsyncLicenseServerOperations:
             f"{_BASE_PATH}/{key}/servers",
             multi_query_params={"servers": sorted(identifiers)},
         )
-        return License.model_validate(resp.result["license"])
+        return License.model_validate(resp.require_result()["license"])
 
 
 class AsyncLicenseIpOperations:
@@ -52,7 +52,7 @@ class AsyncLicenseIpOperations:
         resp = await self._http.request(
             "POST", f"{_BASE_PATH}/{key}/ips", json_body=sorted(addresses)
         )
-        return License.model_validate(resp.result["license"])
+        return License.model_validate(resp.require_result()["license"])
 
     async def remove(self, key: str, addresses: set[str]) -> License:
         resp = await self._http.request(
@@ -60,7 +60,7 @@ class AsyncLicenseIpOperations:
             f"{_BASE_PATH}/{key}/ips",
             multi_query_params={"ips": sorted(addresses)},
         )
-        return License.model_validate(resp.result["license"])
+        return License.model_validate(resp.require_result()["license"])
 
 
 class AsyncLicenseSubUserOperations:
@@ -70,11 +70,11 @@ class AsyncLicenseSubUserOperations:
     async def add(self, key: str, sub_users: list[SubUser]) -> License:
         body = [su.model_dump() for su in sub_users]
         resp = await self._http.request("POST", f"{_BASE_PATH}/{key}/sub-users", json_body=body)
-        return License.model_validate(resp.result["license"])
+        return License.model_validate(resp.require_result()["license"])
 
     async def remove(self, key: str, sub_users: list[SubUser]) -> License:
         body = [su.model_dump() for su in sub_users]
         resp = await self._http.request(
             "POST", f"{_BASE_PATH}/{key}/sub-users/remove", json_body=body
         )
-        return License.model_validate(resp.result["license"])
+        return License.model_validate(resp.require_result()["license"])
