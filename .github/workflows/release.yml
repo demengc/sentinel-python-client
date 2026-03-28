@@ -12,6 +12,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Set version from tag
+        run: sed -i "s/^version = .*/version = \"${GITHUB_REF_NAME#v}\"/" pyproject.toml
+      - name: Install dev dependencies
+        run: pip install -e ".[dev]"
+      - name: Test
+        run: pytest -v
       - run: pip install build
       - run: python -m build
       - uses: actions/upload-artifact@v4
