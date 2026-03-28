@@ -22,8 +22,7 @@ class LicenseProduct(_CamelModel):
 
 
 class LicenseTier(_CamelModel):
-    id: str
-    name: str | None = None
+    name: str
     entitlements: set[str] = set()
 
 

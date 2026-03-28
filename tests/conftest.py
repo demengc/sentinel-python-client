@@ -11,7 +11,6 @@ SAMPLE_LICENSE_JSON = {
             "logoUrl": "https://example.com/logo.png",
         },
         "tier": {
-            "id": "tier_1",
             "name": "Premium",
             "entitlements": ["feature_a", "feature_b"],
         },

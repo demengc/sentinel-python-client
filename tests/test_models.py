@@ -32,9 +32,8 @@ def test_license_product_nullable_fields():
 
 
 def test_license_tier_from_json():
-    data = {"id": "tier_1", "name": "Premium", "entitlements": ["a", "b"]}
+    data = {"name": "Premium", "entitlements": ["a", "b"]}
     tier = LicenseTier.model_validate(data)
-    assert tier.id == "tier_1"
     assert tier.name == "Premium"
     assert tier.entitlements == {"a", "b"}
 
