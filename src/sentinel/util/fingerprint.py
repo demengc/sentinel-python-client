@@ -194,11 +194,9 @@ def _fallback_fingerprint() -> str:
             parts.append(hostname)
 
     macs = _read_mac_addresses(containerized)
-    if not macs and containerized:
-        macs = _read_mac_addresses(False)
     parts.extend(macs)
 
-    if not macs and hostname is None:
+    if not macs and hostname is None and not containerized:
         parts.append(os.environ.get("USER", os.environ.get("USERNAME", "")))
         parts.append(os.path.expanduser("~"))
 
