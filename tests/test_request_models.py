@@ -148,3 +148,29 @@ class TestValidationRequest:
         body = req.to_body()
         assert "key" not in body
         assert "ip" not in body
+        assert "listingPlatform" not in body
+        assert "listingResourceId" not in body
+
+    def test_to_body_with_listing(self):
+        req = ValidationRequest(
+            listing_platform="Spigot",
+            listing_resource_id="12345",
+            server="server-1",
+        )
+        body = req.to_body()
+        assert "product" not in body
+        assert body["listingPlatform"] == "Spigot"
+        assert body["listingResourceId"] == "12345"
+        assert body["server"] == "server-1"
+
+    def test_to_body_with_product_and_listing(self):
+        """The client forwards both verbatim; the server enforces XOR."""
+        req = ValidationRequest(
+            product="prod_1",
+            listing_platform="Spigot",
+            listing_resource_id="12345",
+        )
+        body = req.to_body()
+        assert body["product"] == "prod_1"
+        assert body["listingPlatform"] == "Spigot"
+        assert body["listingResourceId"] == "12345"

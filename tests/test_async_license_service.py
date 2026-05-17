@@ -1,3 +1,5 @@
+import json
+
 import pytest
 import respx
 
@@ -42,6 +44,20 @@ class TestAsyncValidate:
         result = await service.validate(ValidationRequest(product="prod_1", server="s1"))
         assert not result.is_valid
         assert result.type == ValidationResultType.EXPIRED_LICENSE
+
+    @respx.mock
+    async def test_listing_identification(self, service):
+        route = respx.post(f"{BASE}/api/v2/licenses/validate").respond(
+            200, json=SAMPLE_VALIDATION_SUCCESS_JSON
+        )
+        result = await service.validate(
+            ValidationRequest(listing_platform="Spigot", listing_resource_id="12345", server="s1")
+        )
+        assert result.is_valid
+        sent = json.loads(route.calls.last.request.content)
+        assert "product" not in sent
+        assert sent["listingPlatform"] == "Spigot"
+        assert sent["listingResourceId"] == "12345"
 
 
 class TestAsyncCrud:
