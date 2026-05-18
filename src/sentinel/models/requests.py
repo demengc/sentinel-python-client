@@ -162,15 +162,23 @@ class ListLicensesRequest:
 
 @dataclass(frozen=True)
 class ValidationRequest:
-    product: str
+    """Identify the product either by ``product`` (its name) or by the pair
+    ``listing_platform`` + ``listing_resource_id`` (resolves through one of the
+    product's platform listings). The XOR rule is enforced server-side."""
+
+    product: str | None = None
     key: str | None = None
     server: str | None = None
     ip: str | None = None
     connection_platform: str | None = None
     connection_value: str | None = None
+    listing_platform: str | None = None
+    listing_resource_id: str | None = None
 
     def to_body(self) -> dict[str, str]:
-        body: dict[str, str] = {"product": self.product}
+        body: dict[str, str] = {}
+        if self.product is not None:
+            body["product"] = self.product
         if self.key is not None:
             body["key"] = self.key
         if self.server is not None:
@@ -181,4 +189,8 @@ class ValidationRequest:
             body["connectionPlatform"] = self.connection_platform
         if self.connection_value is not None:
             body["connectionValue"] = self.connection_value
+        if self.listing_platform is not None:
+            body["listingPlatform"] = self.listing_platform
+        if self.listing_resource_id is not None:
+            body["listingResourceId"] = self.listing_resource_id
         return body
